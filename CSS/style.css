@@ -1,0 +1,45 @@
+#header {
+  display: flex;
+  margin: 10px 10px 10px 10px;
+  height: 275px;
+  border: 3px solid;
+}
+
+#logo {
+  height: 100%;
+  width: 20%;
+}
+
+#banner {
+  height: 100%;
+  width: 80%;
+}
+
+#mainContent {
+  display: flex;
+  margin: 10px 10px 10px 10px;
+}
+
+#navigationMenu {
+  padding: 0 0 0 0;
+  width: 20%;
+}
+
+#navigationMenu > li {
+  text-align: center;
+  line-height: 50px;
+  list-style-type: none;
+  margin: 5px 5px 5px 5px;
+  border: 2px solid;
+  height: 50px;
+}
+
+#productList {
+  width: 80%
+}
+
+#footer {
+  display: flex;
+  margin: 10px 10px 10px 10px;
+  border: 2px solid;
+}
