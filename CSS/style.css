@@ -25,6 +25,7 @@ body {
 }
 
 #navigationMenu {
+    margin: 0;
     padding: 0;
     width: 200px;
 }
@@ -54,9 +55,8 @@ body {
 .product {
     height: 250px;
     width: 26%;
-    border: 2px solid;
     text-align: center;
-    margin: 10px 5px;
+    margin: 5px;
     padding: 20px 20px 0 20px;
 }
 
