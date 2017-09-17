@@ -94,7 +94,12 @@ body {
 }
 
 #footer {
-    display: flex;
     margin: 10px;
+    height: 2em;
     border: 2px solid;
+    text-align: center;
+}
+
+#footer > span {
+    vertical-align: -webkit-baseline-middle;
 }
