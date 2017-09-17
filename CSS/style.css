@@ -1,37 +1,31 @@
-#page {
+body {
+    font-family: Arial;
     width: 1000px;
     margin: 0 auto;
 }
 
 #header {
     display: flex;
-    margin: 10px 10px 10px 10px;
+    margin: 10px;
     height: 275px;
     border: 3px solid;
 }
 
-body {
-  font-family: Arial;
-}
-
-
 #logo {
-    height: 100%;
     width: 20%;
 }
 
 #banner {
-    height: 100%;
     width: 80%;
 }
 
 #mainContent {
     display: flex;
-    margin: 10px 10px 10px 10px;
+    margin: 10px;
 }
 
 #navigationMenu {
-    padding: 0 0 0 0;
+    padding: 0;
     width: 200px;
 }
 
@@ -39,7 +33,7 @@ body {
     text-align: center;
     line-height: 50px;
     list-style-type: none;
-    margin: 5px 5px 5px 5px;
+    margin: 5px;
     border: 2px solid;
     height: 50px;
 }
@@ -63,7 +57,7 @@ body {
     border: 2px solid;
     text-align: center;
     margin: 10px 5px;
-    padding: 20px 20px 0px 20px;
+    padding: 20px 20px 0 20px;
 }
 
 .product:hover {
@@ -93,14 +87,19 @@ body {
 .productInfo > .productPrice {
     display: none;
     position: absolute;
-    padding: 5px 0px;
+    padding: 5px 0;
     left: 0;
     right: 0;
     bottom: 0;
 }
 
 #footer {
-    display: flex;
-    margin: 10px 10px 10px 10px;
+    margin: 10px;
+    height: 2em;
     border: 2px solid;
+    text-align: center;
+}
+
+#footer > span {
+    vertical-align: -webkit-baseline-middle;
 }
