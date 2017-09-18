@@ -8,15 +8,19 @@ body {
     display: flex;
     margin: 10px;
     height: 275px;
-    border: 3px solid;
+    width: 100%;
 }
 
 #logo {
     width: 20%;
+    border: 3px solid;
+    margin-right: 10px;
 }
 
 #welcomeBanner {
-    width: 80%;
+    width: 75%;
+    border: 3px solid;
+    margin-left: 10px;
 }
 
 #mainContent {
@@ -34,9 +38,10 @@ body {
     text-align: center;
     line-height: 50px;
     list-style-type: none;
-    margin: 5px;
+    margin: 5px 0 5px 0;
     border: 2px solid;
     height: 50px;
+    width: 100%;
 }
 
 #navigationMenu > li:hover {
