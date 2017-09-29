@@ -1,0 +1,110 @@
+body {
+    font-family: Arial;
+    width: 1000px;
+    margin: 0 auto;
+}
+
+#header {
+    display: flex;
+    margin: 10px;
+    height: 275px;
+    width: 100%;
+}
+
+#logo {
+    width: 20%;
+    border: 3px solid;
+    margin-right: 10px;
+}
+
+#welcomeBanner {
+    width: 75%;
+    border: 3px solid;
+    margin-left: 10px;
+}
+
+#mainContent {
+    display: flex;
+    margin: 10px;
+}
+
+#navigationMenu {
+    margin: 0;
+    padding: 0;
+    width: 200px;
+}
+
+#navigationMenu > li {
+    text-align: center;
+    line-height: 50px;
+    list-style-type: none;
+    margin: 5px 0 5px 0;
+    border: 2px solid;
+    height: 50px;
+    width: 100%;
+}
+
+#navigationMenu > li:hover {
+  cursor: pointer;
+  background-color: #EEE;
+  color: #AAA;
+}
+
+#productList {
+    width: 800px;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-evenly;
+}
+
+.product {
+    height: 250px;
+    width: 26%;
+    text-align: center;
+    margin: 5px;
+    padding: 20px 20px 0 20px;
+}
+
+.product:hover {
+    cursor: pointer;
+    background-color: #EEE;
+}
+
+.product:hover .productPrice {
+    display: block;
+    background-color: #989898;
+}
+
+.product > .productName {
+    vertical-align: -webkit-baseline-middle;
+}
+
+.product > .productInfo {
+    height: 90%;
+    position: relative;
+}
+
+.productInfo > .productImage {
+    height: 100%;
+    width: 100%;
+}
+
+.productInfo > .productPrice {
+    display: none;
+    position: absolute;
+    padding: 5px 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+}
+
+#footer {
+    margin: 10px;
+    height: 2em;
+    border: 2px solid;
+    text-align: center;
+}
+
+#footer > span {
+    vertical-align: -webkit-baseline-middle;
+}
