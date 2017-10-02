@@ -40,3 +40,16 @@ function removeFromCart(productName) {
 
     products[productName] = products[productName] + 1;
 }
+
+function showCart() {
+    if (Object.keys(cart).length === 0) {
+        alert("Your shopping cart is empty!");
+        return;
+    }
+
+    var items = "";
+    for (var item in cart) {
+        items = items + item + " : " + cart[item] + "\n";
+    }
+    alert(items);
+}
