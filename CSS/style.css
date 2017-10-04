@@ -23,6 +23,15 @@ body {
     margin-left: 10px;
 }
 
+.showCartButtonContainer {
+    text-align: right;
+}
+
+#showCartButton {
+    font-size: 1em;
+    cursor: pointer;
+}
+
 #mainContent {
     display: flex;
     margin: 10px;
