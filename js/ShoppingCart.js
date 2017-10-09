@@ -16,7 +16,10 @@ var products = {
     Tent: 5
 }
 
+var inactiveTime = 0;
+
 function addToCart(productName) {
+    inactiveTime = 0;
     if (products[productName] <= 0) {
         alert("Sorry, " + productName + " is out of stock! :(");
         return;
@@ -27,6 +30,7 @@ function addToCart(productName) {
 }
 
 function removeFromCart(productName) {
+    inactiveTime = 0;
     if (!cart.hasOwnProperty(productName) || cart[productName] <= 0) {
         alert("Oops, " + productName + " does not exist in your cart!");
         return;
@@ -53,3 +57,17 @@ function showCart() {
     }
     alert(items);
 }
+
+function incrementTimer() {
+    inactiveTime++;
+    
+    if (inactiveTime == 30) {
+        alert('Hey there! Are you still planning to buy something?');
+        inactiveTime = 0;
+    }
+}
+
+
+
+
+
