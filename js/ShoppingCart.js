@@ -67,7 +67,6 @@ function incrementTimer() {
     }
 }
 
-
-
-
-
+function setInactiveInterval() {
+    setInterval(incrementTimer, 1000);
+}
