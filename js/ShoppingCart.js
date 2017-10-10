@@ -18,6 +18,8 @@ var products = {
 
 var inactiveTime = 0;
 
+var max_inactive_time = 30;
+
 function addToCart(productName) {
     inactiveTime = 0;
     if (products[productName] <= 0) {
@@ -61,7 +63,7 @@ function showCart() {
 function incrementTimer() {
     inactiveTime++;
     
-    if (inactiveTime == 30) {
+    if (inactiveTime == max_inactive_time) {
         alert('Hey there! Are you still planning to buy something?');
         inactiveTime = 0;
     }
