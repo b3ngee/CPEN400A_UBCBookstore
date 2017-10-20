@@ -28,10 +28,11 @@ Product.prototype.computeNetPrice = function(quantity) {
 
 var inactiveTime = 0;
 
-var max_inactive_time = 30;
+var max_inactive_time = 300;
 
 function addToCart(productName) {
-    inactiveTime = 0;
+    updateInactiveTime(0);
+
     if (products[productName].quantity <= 0) {
         alert("Sorry, " + productName + " is out of stock! :(");
         return;
@@ -39,10 +40,42 @@ function addToCart(productName) {
 
     cart[productName] = (cart[productName] + 1) || 1;
     products[productName].quantity = products[productName].quantity - 1;
+
+    if (products[productName].quantity == 0) {
+        hideAddButton(productName);
+        showOutOfStockMessage(productName);
+    }
+
+    if (cart[productName] == 1) {
+        showRemoveButton(productName);
+    }
+
+    updateSubtotal();
+}
+
+function hideAddButton(productName) {
+    document.getElementById(productName).getElementsByClassName("addButton")[0].style.visibility = "hidden";
+}
+
+function showRemoveButton(productName) {
+    document.getElementById(productName).getElementsByClassName("removeButton")[0].style.visibility = "visible";
+}
+
+function showOutOfStockMessage(productName) {
+    var product = document.getElementById(productName);
+    var productInfo = product.getElementsByClassName("productInfo")[0];
+    var productPrice = product.getElementsByClassName("productPrice")[0];
+
+    var outOfStockMessage = document.createElement("span");
+    outOfStockMessage.className += " outOfStockMessage";
+    outOfStockMessage.appendChild(document.createTextNode("OUT OF STOCK"));
+
+    productInfo.insertBefore(outOfStockMessage, productPrice);
 }
 
 function removeFromCart(productName) {
-    inactiveTime = 0;
+    updateInactiveTime(0);
+
     if (!cart.hasOwnProperty(productName) || cart[productName] <= 0) {
         alert("Oops, " + productName + " does not exist in your cart!");
         return;
@@ -50,14 +83,48 @@ function removeFromCart(productName) {
 
     if (cart[productName] == 1) {
         delete cart[productName];
+        hideRemoveButton(productName);
     } else {
         cart[productName] = cart[productName] - 1;
     }
 
     products[productName].quantity = products[productName].quantity + 1;
+
+    if (products[productName].quantity == 1) {
+        showAddButton(productName);
+        hideOutOfStockMessage(productName);
+    }
+
+    updateSubtotal();
+}
+
+function showAddButton(productName) {
+    document.getElementById(productName).getElementsByClassName("addButton")[0].style.visibility = "visible";
+}
+
+function hideRemoveButton(productName) {
+    document.getElementById(productName).getElementsByClassName("removeButton")[0].style.visibility = "hidden";
+}
+
+function hideOutOfStockMessage(productName) {
+    document.getElementById(productName).getElementsByClassName("outOfStockMessage")[0].remove();
+}
+
+function updateSubtotal() {
+    var cartSubtotal = 0;
+
+    for (var product in cart) {
+        var quantity = cart[product];
+        var price = products[product].product.computeNetPrice(quantity);
+        cartSubtotal+=price;
+    }
+
+    document.getElementById("showCartButton").textContent = "Cart ($" + cartSubtotal + ")";
 }
 
 function showCart() {
+    updateInactiveTime(0);
+
     if (Object.keys(cart).length === 0) {
         alert("Your shopping cart is empty!");
         return;
@@ -71,14 +138,23 @@ function showCart() {
 }
 
 function incrementTimer() {
-    inactiveTime++;
-    
+    updateInactiveTime();
+
     if (inactiveTime == max_inactive_time) {
         alert('Hey there! Are you still planning to buy something?');
-        inactiveTime = 0;
+        updateInactiveTime(0);
     }
 }
 
 function setInactiveInterval() {
     setInterval(incrementTimer, 1000);
+}
+
+function updateInactiveTime(time) {
+    if (time == undefined) {
+        inactiveTime++;
+    } else {
+        inactiveTime = time;
+    }
+    document.getElementById("inactiveTimer").textContent = inactiveTime;
 }

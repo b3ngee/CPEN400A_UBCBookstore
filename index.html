@@ -13,7 +13,7 @@
         </div>
 
         <div class="showCartButtonContainer">
-            <button id="showCartButton" onclick="showCart()">Show Cart</button>
+            <button id="showCartButton" onclick="showCart()">Cart ($0)</button>
         </div>
 
         <div id="mainContent">
@@ -27,7 +27,7 @@
                 <li>Supplies</li>
             </ul>
             <div id="productList">
-                <div class="product">
+                <div class="product" id="Box1">
                     <div class="productInfo">
                         <img class="productImage" src="./Images/Products/Box1_$10.png">
                         <img class="cartOverlay" src="./Images/cart.png">
@@ -39,7 +39,7 @@
                     </div>
                     <span class="productName">Box 1</span>
                 </div>
-                <div class="product">
+                <div class="product" id="Box2">
                     <div class="productInfo">
                         <img class="productImage" src="./Images/Products/Box2_$5.png">
                         <img class="cartOverlay" src="./Images/cart.png">
@@ -51,7 +51,7 @@
                     </div>
                     <span class="productName">Box 2</span>
                 </div>
-                <div class="product">
+                <div class="product" id="Clothes1">
                     <div class="productInfo">
                         <img class="productImage" src="./Images/Products/Clothes1_$20.png">
                         <img class="cartOverlay" src="./Images/cart.png">
@@ -63,7 +63,7 @@
                     </div>
                     <span class="productName">Clothes 1</span>
                 </div>
-                <div class="product">
+                <div class="product" id="Clothes2">
                     <div class="productInfo">
                         <img class="productImage" src="./Images/Products/Clothes2_$30.png">
                         <img class="cartOverlay" src="./Images/cart.png">
@@ -75,7 +75,7 @@
                     </div>
                     <span class="productName">Clothes 2</span>
                 </div>
-                <div class="product">
+                <div class="product" id="Jeans">
                     <div class="productInfo">
                         <img class="productImage" src="./Images/Products/Jeans_$50.png">
                         <img class="cartOverlay" src="./Images/cart.png">
@@ -87,7 +87,7 @@
                     </div>
                     <span class="productName">Jeans</span>
                 </div>
-                <div class="product">
+                <div class="product" id="Keyboard">
                     <div class="productInfo">
                         <img class="productImage" src="./Images/Products/Keyboard_$20.png">
                         <img class="cartOverlay" src="./Images/cart.png">
@@ -99,7 +99,7 @@
                     </div>
                     <span class="productName">Keyboard</span>
                 </div>
-                <div class="product">
+                <div class="product" id="KeyboardCombo">
                     <div class="productInfo">
                         <img class="productImage" src="./Images/Products/KeyboardCombo_$40.png">
                         <img class="cartOverlay" src="./Images/cart.png">
@@ -111,7 +111,7 @@
                     </div>
                     <span class="productName">Keyboard Combo</span>
                 </div>
-                <div class="product">
+                <div class="product" id="Mice">
                     <div class="productInfo">
                         <img class="productImage" src="./Images/Products/Mice_$20.png">
                         <img class="cartOverlay" src="./Images/cart.png">
@@ -123,7 +123,7 @@
                     </div>
                     <span class="productName">Mice</span>
                 </div>
-                <div class="product">
+                <div class="product" id="PC1">
                     <div class="productInfo">
                         <img class="productImage" src="./Images/Products/PC1_$350.png">
                         <img class="cartOverlay" src="./Images/cart.png">
@@ -135,7 +135,7 @@
                     </div>
                     <span class="productName">PC 1</span>
                 </div>
-                <div class="product">
+                <div class="product" id="PC2">
                     <div class="productInfo">
                         <img class="productImage" src="./Images/Products/PC2_$400.png">
                         <img class="cartOverlay" src="./Images/cart.png">
@@ -147,7 +147,7 @@
                     </div>
                     <span class="productName">PC 2</span>
                 </div>
-                <div class="product">
+                <div class="product" id="PC3">
                     <div class="productInfo">
                         <img class="productImage" src="./Images/Products/PC3_$300.png">
                         <img class="cartOverlay" src="./Images/cart.png">
@@ -159,7 +159,7 @@
                     </div>
                     <span class="productName">PC 3</span>
                 </div>
-                <div class="product">
+                <div class="product" id="Tent">
                     <div class="productInfo">
                         <img class="productImage" src="./Images/Products/Tent_$100.png">
                         <img class="cartOverlay" src="./Images/cart.png">
@@ -173,8 +173,9 @@
                 </div>
             </div>
         </div>
-        <div id="footer">
+        <span id="footer">
             <span>Contact Information.</span>
-        </div>
+            <span id="inactiveTimer">0</span>
+        </span>
     </body>
 </html>
