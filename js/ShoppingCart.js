@@ -28,10 +28,11 @@ Product.prototype.computeNetPrice = function(quantity) {
 
 var inactiveTime = 0;
 
-var max_inactive_time = 30;
+var max_inactive_time = 300;
 
 function addToCart(productName) {
-    inactiveTime = 0;
+    updateInactiveTime(0);
+
     if (products[productName].quantity <= 0) {
         alert("Sorry, " + productName + " is out of stock! :(");
         return;
@@ -44,7 +45,8 @@ function addToCart(productName) {
 }
 
 function removeFromCart(productName) {
-    inactiveTime = 0;
+    updateInactiveTime(0);
+
     if (!cart.hasOwnProperty(productName) || cart[productName] <= 0) {
         alert("Oops, " + productName + " does not exist in your cart!");
         return;
@@ -74,6 +76,8 @@ function updateSubtotal() {
 }
 
 function showCart() {
+    updateInactiveTime(0);
+
     if (Object.keys(cart).length === 0) {
         alert("Your shopping cart is empty!");
         return;
@@ -87,14 +91,23 @@ function showCart() {
 }
 
 function incrementTimer() {
-    inactiveTime++;
+    updateInactiveTime();
 
     if (inactiveTime == max_inactive_time) {
         alert('Hey there! Are you still planning to buy something?');
-        inactiveTime = 0;
+        updateInactiveTime(0);
     }
 }
 
 function setInactiveInterval() {
     setInterval(incrementTimer, 1000);
+}
+
+function updateInactiveTime(time) {
+    if (time == undefined) {
+        inactiveTime++;
+    } else {
+        inactiveTime = time;
+    }
+    document.getElementById("inactiveTimer").textContent = inactiveTime;
 }

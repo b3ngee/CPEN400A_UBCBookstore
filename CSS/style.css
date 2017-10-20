@@ -154,12 +154,18 @@ body {
 }
 
 #footer {
-    margin: 10px;
-    height: 2em;
+    position: relative;
+    display: block;
+    margin: 10px 0;
+    line-height: 2em;
     border: 2px solid;
     text-align: center;
 }
 
-#footer > span {
-    vertical-align: -webkit-baseline-middle;
+#inactiveTimer {
+    position: absolute;
+    right: 0;
+    top: 50%;
+    transform: translate(-50%,-50%);
+    padding-right: 10px;
 }
