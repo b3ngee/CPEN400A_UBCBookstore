@@ -32,13 +32,13 @@ var max_inactive_time = 30;
 
 function addToCart(productName) {
     inactiveTime = 0;
-    if (products[productName] <= 0) {
+    if (products[productName].quantity <= 0) {
         alert("Sorry, " + productName + " is out of stock! :(");
         return;
     }
 
     cart[productName] = (cart[productName] + 1) || 1;
-    products[productName] = products[productName] - 1;
+    products[productName].quantity = products[productName].quantity - 1;
 }
 
 function removeFromCart(productName) {
@@ -54,7 +54,7 @@ function removeFromCart(productName) {
         cart[productName] = cart[productName] - 1;
     }
 
-    products[productName] = products[productName] + 1;
+    products[productName].quantity = products[productName].quantity + 1;
 }
 
 function showCart() {
