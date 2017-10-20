@@ -39,6 +39,8 @@ function addToCart(productName) {
 
     cart[productName] = (cart[productName] + 1) || 1;
     products[productName].quantity = products[productName].quantity - 1;
+
+    updateSubtotal();
 }
 
 function removeFromCart(productName) {
@@ -55,6 +57,20 @@ function removeFromCart(productName) {
     }
 
     products[productName].quantity = products[productName].quantity + 1;
+
+    updateSubtotal();
+}
+
+function updateSubtotal() {
+    var cartSubtotal = 0;
+
+    for (var product in cart) {
+        var quantity = cart[product];
+        var price = products[product].product.computeNetPrice(quantity);
+        cartSubtotal+=price;
+    }
+
+    document.getElementById("showCartButton").textContent = "Cart ($" + cartSubtotal + ")";
 }
 
 function showCart() {
@@ -72,7 +88,7 @@ function showCart() {
 
 function incrementTimer() {
     inactiveTime++;
-    
+
     if (inactiveTime == max_inactive_time) {
         alert('Hey there! Are you still planning to buy something?');
         inactiveTime = 0;
