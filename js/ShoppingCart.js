@@ -41,7 +41,36 @@ function addToCart(productName) {
     cart[productName] = (cart[productName] + 1) || 1;
     products[productName].quantity = products[productName].quantity - 1;
 
+    if (products[productName].quantity == 0) {
+        hideAddButton(productName);
+        showOutOfStockMessage(productName);
+    }
+
+    if (cart[productName] == 1) {
+        showRemoveButton(productName);
+    }
+
     updateSubtotal();
+}
+
+function hideAddButton(productName) {
+    document.getElementById(productName).getElementsByClassName("addButton")[0].style.visibility = "hidden";
+}
+
+function showRemoveButton(productName) {
+    document.getElementById(productName).getElementsByClassName("removeButton")[0].style.visibility = "visible";
+}
+
+function showOutOfStockMessage(productName) {
+    var product = document.getElementById(productName);
+    var productInfo = product.getElementsByClassName("productInfo")[0];
+    var productPrice = product.getElementsByClassName("productPrice")[0];
+
+    var outOfStockMessage = document.createElement("span");
+    outOfStockMessage.className += " outOfStockMessage";
+    outOfStockMessage.appendChild(document.createTextNode("OUT OF STOCK"));
+
+    productInfo.insertBefore(outOfStockMessage, productPrice);
 }
 
 function removeFromCart(productName) {
@@ -54,13 +83,31 @@ function removeFromCart(productName) {
 
     if (cart[productName] == 1) {
         delete cart[productName];
+        hideRemoveButton(productName);
     } else {
         cart[productName] = cart[productName] - 1;
     }
 
     products[productName].quantity = products[productName].quantity + 1;
 
+    if (products[productName].quantity == 1) {
+        showAddButton(productName);
+        hideOutOfStockMessage(productName);
+    }
+
     updateSubtotal();
+}
+
+function showAddButton(productName) {
+    document.getElementById(productName).getElementsByClassName("addButton")[0].style.visibility = "visible";
+}
+
+function hideRemoveButton(productName) {
+    document.getElementById(productName).getElementsByClassName("removeButton")[0].style.visibility = "hidden";
+}
+
+function hideOutOfStockMessage(productName) {
+    document.getElementById(productName).getElementsByClassName("outOfStockMessage")[0].remove();
 }
 
 function updateSubtotal() {
