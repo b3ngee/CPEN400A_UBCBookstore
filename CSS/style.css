@@ -27,7 +27,7 @@ body {
     text-align: right;
 }
 
-#showCartButton {
+button {
     font-size: 1em;
     cursor: pointer;
 }
@@ -122,13 +122,20 @@ body {
     left: 0;
 }
 
-.productInfo > .cartButtons {
+.product .cartButtons {
     display: none;
     position: absolute;
     top: 40%;
     left: 10%;
     right: 10%;
     vertical-align: top;
+}
+
+.product .cartButtons > button {
+    font-size: 16px;
+    margin: 5px;
+    padding: 10px;
+    border-radius: 10px;
 }
 
 .productInfo > .outOfStockMessage {
@@ -144,12 +151,8 @@ body {
 }
 
 .cartButtons > button {
-    padding: 10px;
-    border-radius: 10px;
     border: none;
-    font-size: 16px;
     cursor: pointer;
-    margin: 5px;
 }
 
 .addButton {
@@ -158,6 +161,9 @@ body {
 
 .removeButton {
     background: #c41b13;
+}
+
+.product .removeButton {
     visibility: hidden;
 }
 
@@ -185,4 +191,85 @@ body {
     top: 50%;
     transform: translate(-50%,-50%);
     padding-right: 10px;
+}
+
+#modal {
+    display: none;
+    position: fixed;
+    z-index: 1;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgb(0,0,0);
+    background-color: rgba(0,0,0,0.25);
+}
+
+.modal-content {
+    position: relative;
+    background-color: #fefefe;
+    margin: 10% auto;
+    padding: 20px;
+    border: 1px solid #000;
+    border-radius: 10px;
+    box-shadow: 0 0 20px rgba(0,0,0,1);
+    width: 600px;
+}
+
+.modal-content .closeModalButton {
+    position: absolute;
+    top: -10px;
+    right: -10px;
+}
+
+.closeModalButton {
+    width: 30px;
+    height: 30px;
+    color: #FFF;
+    background-color: #000;
+    border-radius: 50%;
+    border: 1px double #FFF;
+    box-shadow: 0 0 20px rgba(0,0,0,1);
+    font-size: 19px;
+    font-weight: bold;
+}
+
+.closeModalButton:hover,
+.closeModalButton:focus {
+    color: #f4f4f4;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+#cart-items {
+    max-height: 300px;
+    overflow: scroll;
+    margin-bottom: 20px;
+}
+
+#cart .item {
+    line-height: 30px;
+    margin-bottom: 10px;
+}
+
+#cart .item .productName {
+    float: left;
+    width: 30%;
+}
+
+#cart .item .quantity {
+    float: left;
+    width: 25%;
+}
+
+#cart .item .cartButtons > button {
+    width: 30px;
+    height: 30px;
+    border-radius: 30px;
+    margin-right: 10px;
+}
+
+#cart .checkoutButtonContainer {
+    text-align: right;
 }
