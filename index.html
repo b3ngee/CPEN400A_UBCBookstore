@@ -6,7 +6,7 @@
             <script type="text/javascript" src="./js/ShoppingCart.js"></script>
         <title>UBC Bookstore</title>
     </head>
-    <body onload="setInactiveInterval()">
+    <body>
         <div id="header">
             <img id="logo" src="./Images/bookstore.jpg">
             <img id="welcomeBanner" src="./Images/welcomebanner.jpg">
@@ -177,5 +177,17 @@
             <span>Contact Information.</span>
             <span id="inactiveTimer">0</span>
         </span>
+        <div id="modal">
+            <div class="modal-content">
+                <button class="closeModalButton">&times;</button>
+                <div id="cart">
+                    <h3>Shopping Cart</h3>
+                    <div id="cart-items"></div>
+                    <div class="checkoutButtonContainer">
+                        <button id="checkoutButton">CHECKOUT</button>
+                    </div>
+                </div>
+            </div>
+        </div>
     </body>
 </html>
