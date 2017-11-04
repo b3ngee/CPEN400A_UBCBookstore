@@ -20,6 +20,7 @@ var inactiveTime = 0;
 var max_inactive_time = 300;
 
 window.addEventListener("load", function() {
+    initializeDomProductList();
     setInactiveInterval();
 
     // Register hide modal event listeners
@@ -39,6 +40,81 @@ function Product(name, price, imageUrl) {
 
 Product.prototype.computeNetPrice = function(quantity) {
     return this.price * quantity;
+}
+
+function initializeDomProductList() {
+    var fragment = document.createDocumentFragment();
+
+    for (var p in products) {
+        var product = products[p].product;
+        fragment.appendChild(createProduct(product));
+    }
+
+    document.getElementById("productList").appendChild(fragment);
+}
+
+function createProduct(product) {
+    var productDiv = document.createElement("div");
+    productDiv.id = product.name;
+    productDiv.classList.add("product");
+
+    var productInfo = createProductInfo(product);
+    productDiv.appendChild(productInfo);
+
+    var productNameSpan = document.createElement("span");
+    productNameSpan.classList.add("productName");
+    productNameSpan.appendChild(document.createTextNode(product.name));
+    productDiv.appendChild(productNameSpan);
+
+    return productDiv;
+}
+
+function createProductInfo(product) {
+    var productInfoDiv = document.createElement("div");
+    productInfoDiv.classList.add("productInfo");
+
+    var productImg = document.createElement("img");
+    productImg.classList.add("productImage");
+    productImg.src = product.imageUrl;
+    productInfoDiv.appendChild(productImg);
+
+    var cartOverlay = document.createElement("img");
+    cartOverlay.classList.add("cartOverlay");
+    cartOverlay.src = "./Images/cart.png";
+    productInfoDiv.appendChild(cartOverlay);
+
+    var cartButtons = createCartButtons(product);
+    productInfoDiv.appendChild(cartButtons);
+
+    var productPrice = document.createElement("span");
+    productPrice.classList.add("productPrice");
+    productPrice.appendChild(document.createTextNode("$" + product.price));
+    productInfoDiv.appendChild(productPrice);
+
+    return productInfoDiv;
+}
+
+function createCartButtons(product) {
+    var cartButtons = document.createElement("span");
+    cartButtons.classList.add("cartButtons");
+
+    var addButton = document.createElement("button");
+    addButton.classList.add("addButton");
+    addButton.addEventListener("click", function() {
+        addToCart(product.name);
+    });
+    addButton.appendChild(document.createTextNode("Add"));
+    cartButtons.appendChild(addButton);
+
+    var removeButton = document.createElement("button");
+    removeButton.classList.add("removeButton");
+    removeButton.addEventListener("click", function() {
+        removeFromCart(product.name);
+    });
+    removeButton.appendChild(document.createTextNode("Remove"));
+    cartButtons.appendChild(removeButton);
+
+    return cartButtons;
 }
 
 function addToCart(productName) {
