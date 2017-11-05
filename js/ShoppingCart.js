@@ -18,6 +18,8 @@ var products = {
 
 var inactiveTime = 0;
 var max_inactive_time = 300;
+var max_ajax_resend_count = 10;
+var ajax_timeout = 1000;
 
 window.addEventListener("load", function() {
     initializeDomProductList();
@@ -30,6 +32,17 @@ window.addEventListener("load", function() {
             hideModal();
         }
     });
+
+    ajaxGet("https://cpen400a-bookstore.herokuapp.com/products",
+	    function(response){
+            // TODO: Initialize products variable
+            console.log(response);
+        },
+        function(error){
+            // TODO: Handle error
+            console.log(error);
+        }
+    );
 });
 
 function Product(name, price, imageUrl) {
@@ -330,4 +343,36 @@ function updateInactiveTime(time) {
         inactiveTime = time;
     }
     document.getElementById("inactiveTimer").textContent = inactiveTime;
+}
+
+function ajaxGet(url, successCallback, errorCallback) {
+    var resendCount = 0;
+
+    var sendAjaxGet = function() {
+        var xhr = new XMLHttpRequest();
+        xhr.open("GET", url);
+        xhr.timeout = ajax_timeout;
+
+        function resendAjax() {
+            if (resendCount++ < max_ajax_resend_count) {
+                sendAjaxGet(url, successCallback, errorCallback);
+            }
+        }
+
+        xhr.onload = function() {
+            if (xhr.status == 200) {
+                successCallback(JSON.parse(xhr.responseText));
+            } else if (xhr.status == 500) {
+                resendAjax();
+            } else {
+                errorCallback(xhr.statusText);
+            }
+        };
+        xhr.onerror = resendAjax;
+        xhr.ontimeout = resendAjax;
+
+        xhr.send();
+    }
+
+    sendAjaxGet();
 }
