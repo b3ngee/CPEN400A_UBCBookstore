@@ -7,5 +7,5 @@
 Server: https://calm-badlands-79162.herokuapp.com/
 
 Endpoints:
-- `https://cpen400a-bookstore.herokuapp.com/products` - Retrieves an object containing all the products
-- `https://cpen400a-bookstore.herokuapp.com/products/${productName}` - Retrieves a single product identified by productName
+- `https://calm-badlands-79162.herokuapp.com/products` - Retrieves an object containing all the products
+- `https://calm-badlands-79162.herokuapp.com/products/${productName}` - Retrieves a single product identified by productName
