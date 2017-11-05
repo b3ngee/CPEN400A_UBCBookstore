@@ -1,20 +1,7 @@
 
 var cart = {};
 
-var products = {
-    'Box1': { product: new Product('Box1', 10, './Images/Products/Box1_$10.png'), quantity: 5 },
-    'Box2': { product: new Product('Box2', 5, './Images/Products/Box2_$5.png'), quantity: 5 },
-    'Clothes1': { product: new Product('Clothes1', 20, './Images/Products/Clothes1_$20.png'), quantity: 5 },
-    'Clothes2': { product: new Product('Clothes2', 30, './Images/Products/Clothes2_$30.png'), quantity: 5 },
-    'Jeans': { product: new Product('Jeans', 50, './Images/Products/Jeans_$50.png'), quantity: 5 },
-    'KeyboardCombo': { product: new Product('KeyboardCombo', 40, './Images/Products/KeyboardCombo_$40.png'), quantity: 5 },
-    'Keyboard': { product: new Product('Keyboard', 20, './Images/Products/Keyboard_$20.png'), quantity: 5 },
-    'Mice': { product: new Product('Mice', 20, './Images/Products/Mice_$20.png'), quantity: 5 },
-    'PC1': { product: new Product('PC1', 350, './Images/Products/PC1_$350.png'), quantity: 5 },
-    'PC2': { product: new Product('PC2', 400, './Images/Products/PC2_$400.png'), quantity: 5 },
-    'PC3': { product: new Product('PC3', 300, './Images/Products/PC3_$300.png'), quantity: 5 },
-    'Tent': { product: new Product('Tent', 100, './Images/Products/Tent_$100.png'), quantity: 5 }
-}
+var products = {};
 
 var inactiveTime = 0;
 var max_inactive_time = 300;
@@ -22,7 +9,6 @@ var max_ajax_resend_count = 10;
 var ajax_timeout = 1000;
 
 window.addEventListener("load", function() {
-    initializeDomProductList();
     setInactiveInterval();
 
     // Register hide modal event listeners
@@ -35,19 +21,22 @@ window.addEventListener("load", function() {
 
     ajaxGet("https://cpen400a-bookstore.herokuapp.com/products",
 	    function(response){
-            // TODO: Initialize products variable
-            console.log(response);
+            for (var key in response) {
+                var value = response[key];
+                products[key] = new Product(value.name, value.price, value.quantity, value.imageUrl);
+            }
+            initializeDomProductList();
         },
         function(error){
-            // TODO: Handle error
             console.log(error);
         }
     );
 });
 
-function Product(name, price, imageUrl) {
+function Product(name, price, quantity, imageUrl) {
     this.name = name;
     this.price = price;
+    this.quantity = quantity;
     this.imageUrl = imageUrl;
 }
 
@@ -59,7 +48,7 @@ function initializeDomProductList() {
     var fragment = document.createDocumentFragment();
 
     for (var p in products) {
-        var product = products[p].product;
+        var product = products[p];
         fragment.appendChild(createProduct(product));
     }
 
@@ -215,7 +204,7 @@ function updateSubtotal() {
 
     for (var product in cart) {
         var quantity = cart[product];
-        var price = products[product].product.computeNetPrice(quantity);
+        var price = products[product].computeNetPrice(quantity);
         cartSubtotal+=price;
     }
 
