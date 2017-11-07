@@ -19,18 +19,7 @@ window.addEventListener("load", function() {
         }
     });
 
-    ajaxGet("https://cpen400a-bookstore.herokuapp.com/products",
-	    function(response){
-            for (var key in response) {
-                var value = response[key];
-                products[key] = new Product(value.name, value.price, value.quantity, value.imageUrl);
-            }
-            initializeDomProductList();
-        },
-        function(error){
-            console.log(error);
-        }
-    );
+    ajaxGet("https://cpen400a-bookstore.herokuapp.com/products", ajaxOnSuccess, ajaxOnFailure);
 });
 
 function Product(name, price, quantity, imageUrl) {
@@ -42,6 +31,18 @@ function Product(name, price, quantity, imageUrl) {
 
 Product.prototype.computeNetPrice = function(quantity) {
     return this.price * quantity;
+}
+
+function ajaxOnSuccess(response) {
+    for (var key in response) {
+        var value = response[key];
+        products[key] = new Product(value.name, value.price, value.quantity, value.imageUrl);
+    }
+    initializeDomProductList();
+}
+
+function ajaxOnFailure(error) {
+    console.log(error);
 }
 
 function initializeDomProductList() {
@@ -227,6 +228,70 @@ function createCartItems() {
     for (var item in cart) {
         addCartItemToDom(item, cart[item]);
     }
+}
+
+function getUpdatedProducts() {
+    ajaxGet("https://cpen400a-bookstore.herokuapp.com/products", compareProducts, ajaxOnFailure);
+    
+    function compareProducts(response) {
+        var priceChanged = {};
+        var quantityChanged = {};
+    
+        for (var item in cart) {
+            if (products[item].price !== response[item].price) {
+                priceChanged[item] = response[item].price;
+            }
+    
+            if (products[item].quantity > response[item].quantity) {
+                quantityChanged[item] = response[item].quantity;
+            }
+        }
+    
+        if (Object.keys(priceChanged).length !== 0 || Object.keys(quantityChanged).length !== 0) {
+            if (Object.keys(priceChanged).length !== 0) {
+                updatePrice(priceChanged);
+            }
+
+            if (Object.keys(quantityChanged).length !== 0) {
+                updateQuantity(quantityChanged);
+            }
+
+            updateSubtotal();
+        }
+    }
+}
+
+function updatePrice(priceChanged) {
+    var alertMessage = "";
+    for (var item in priceChanged) {
+        var message = item + " price changed from " + products[item].price + " to " + priceChanged[item] + "\n";
+        alertMessage = alertMessage + message;
+
+        products[item].price = priceChanged[item];
+    }
+
+    alert(alertMessage);
+}
+
+function updateQuantity(quantityChanged) {
+    var alertMessage = "";
+    for (var item in quantityChanged) {
+        var message = "";
+
+        if (quantityChanged[item] == 0) {
+            message = "Sorry " + item + " is now out of stock! \n";
+            removeFromCartFromCart(item);
+        }
+        else {
+            var oldTotalQuantity = products[item].quantity + cart[item];
+            message = item + " quantity changed from " + oldTotalQuantity + " to " + quantityChanged[item] + "\n";
+        }
+
+        alertMessage = alertMessage + message;
+        products[item].quantity = quantityChanged[item];
+    }
+
+    alert(alertMessage);
 }
 
 function addEmptyCartMessageToDom() {
