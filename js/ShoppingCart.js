@@ -186,6 +186,10 @@ function removeFromCart(productName) {
     }
 
     updateSubtotal();
+
+    if (Object.keys(cart).length == 0) {
+        addEmptyCartMessageToDom();
+    }
 }
 
 function showAddButton(productName) {
@@ -210,6 +214,8 @@ function updateSubtotal() {
     }
 
     document.getElementById("showCartButton").textContent = "Cart ($" + cartSubtotal + ")";
+
+    return cartSubtotal;
 }
 
 function showCart() {
@@ -231,71 +237,107 @@ function createCartItems() {
 }
 
 function getUpdatedProducts() {
-    ajaxGet("https://cpen400a-bookstore.herokuapp.com/products", compareProducts, ajaxOnFailure);
-    
-    function compareProducts(response) {
+    ajaxGet("https://cpen400a-bookstore.herokuapp.com/products", compareAndUpdateProducts, ajaxOnFailure);
+
+    function compareAndUpdateProducts(updatedProducts) {
+        function removeItemFromCart(item) {
+            document.getElementById("cart-" + item).remove();
+        }
+
         var priceChanged = {};
         var quantityChanged = {};
-    
-        for (var item in cart) {
-            if (products[item].price !== response[item].price) {
-                priceChanged[item] = response[item].price;
-            }
-    
-            if (products[item].quantity > response[item].quantity) {
-                quantityChanged[item] = response[item].quantity;
+
+        for (var item in products) {
+            var oldPrice = products[item].price;
+            var newPrice = updatedProducts[item].price;
+
+            var productQuantity = products[item].quantity;
+            var cartQuantity = cart[item];
+            var oldQuantity = productQuantity + cartQuantity;
+            var newQuantity = updatedProducts[item].quantity;
+
+            if (item in cart) {
+                if (oldPrice !== newPrice) {
+                    products[item].price = newPrice;
+                    priceChanged[item] = { old: oldPrice, new: newPrice };
+                }
+
+                if (newQuantity == 0) {
+                    products[item].quantity = 0;
+                    delete cart[item];
+                    quantityChanged[item] = { old: oldQuantity, new: newQuantity };
+                    removeItemFromCart(item);
+                } else if (oldQuantity !== newQuantity) {
+                    if (cartQuantity == newQuantity) {
+                        products[item].quantity = 0;
+                    } else if (cartQuantity > newQuantity) {
+                        cart[item] = newQuantity;
+                        products[item].quantity = 0;
+
+                        quantityChanged[item] = { old: cartQuantity, new: newQuantity };
+                    } else if (cartQuantity < newQuantity) {
+                        products[item].quantity = newQuantity - cart[item];
+                    }
+                }
+            } else {
+                products[item].price = newPrice;
+                products[item].quantity = newQuantity;
             }
         }
-    
+
+        if (Object.keys(cart).length == 0) {
+            addEmptyCartMessageToDom();
+        }
+
         if (Object.keys(priceChanged).length !== 0 || Object.keys(quantityChanged).length !== 0) {
             if (Object.keys(priceChanged).length !== 0) {
-                updatePrice(priceChanged);
+                alertPriceChange(priceChanged);
             }
 
             if (Object.keys(quantityChanged).length !== 0) {
-                updateQuantity(quantityChanged);
+                alertQuantityChange(quantityChanged);
             }
-
-            updateSubtotal();
         }
+
+        var subtotal = updateSubtotal();
+        setTimeout(alertSubtotal.bind(null, subtotal), 100);
     }
 }
 
-function updatePrice(priceChanged) {
+function alertPriceChange(priceChanged) {
     var alertMessage = "";
     for (var item in priceChanged) {
-        var message = item + " price changed from " + products[item].price + " to " + priceChanged[item] + "\n";
+        var message = item + " price changed from " + priceChanged[item].old + " to " + priceChanged[item].new + "\n";
         alertMessage = alertMessage + message;
-
-        products[item].price = priceChanged[item];
     }
 
     alert(alertMessage);
 }
 
-function updateQuantity(quantityChanged) {
+function alertQuantityChange(quantityChanged) {
     var alertMessage = "";
     for (var item in quantityChanged) {
-        var message = "";
-
-        if (quantityChanged[item] == 0) {
-            message = "Sorry " + item + " is now out of stock! \n";
-            removeFromCartFromCart(item);
+        if (quantityChanged[item].new == 0) {
+            alertMessage += "Sorry " + item + " is now out of stock! \n";
+        } else {
+            alertMessage += item + " quantity changed from " + quantityChanged[item].old + " to " + quantityChanged[item].new + "\n";
         }
-        else {
-            var oldTotalQuantity = products[item].quantity + cart[item];
-            message = item + " quantity changed from " + oldTotalQuantity + " to " + quantityChanged[item] + "\n";
-        }
-
-        alertMessage = alertMessage + message;
-        products[item].quantity = quantityChanged[item];
     }
 
     alert(alertMessage);
+}
+
+function alertSubtotal(subtotal) {
+    alert("Your subtotal is: $" + subtotal);
 }
 
 function addEmptyCartMessageToDom() {
+    if (document.getElementById("emptyCartMessage")) {
+        return;
+    }
+
     var cartItem = document.createElement("div");
+    cartItem.id = "emptyCartMessage";
     cartItem.classList.add("item");
     cartItem.appendChild(document.createTextNode("Your shopping cart is empty!"));
     document.getElementById("cart-items").appendChild(cartItem);
