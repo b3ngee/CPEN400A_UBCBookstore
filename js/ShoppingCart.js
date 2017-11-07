@@ -236,6 +236,10 @@ function createCartItems() {
     }
 }
 
+function updateItemQuantityInCart(item, newQuantity) {
+    document.getElementById("cart-" + item).getElementsByClassName("quantity")[0].firstChild.nodeValue = newQuantity;
+}
+
 function getUpdatedProducts() {
     ajaxGet("https://cpen400a-bookstore.herokuapp.com/products", compareAndUpdateProducts, ajaxOnFailure);
 
@@ -273,8 +277,8 @@ function getUpdatedProducts() {
                     } else if (cartQuantity > newQuantity) {
                         cart[item] = newQuantity;
                         products[item].quantity = 0;
-
                         quantityChanged[item] = { old: cartQuantity, new: newQuantity };
+                        updateItemQuantityInCart(item, newQuantity);
                     } else if (cartQuantity < newQuantity) {
                         products[item].quantity = newQuantity - cart[item];
                     }
