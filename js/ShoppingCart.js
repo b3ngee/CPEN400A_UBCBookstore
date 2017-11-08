@@ -99,6 +99,13 @@ function createProductInfo(product) {
     productPrice.appendChild(document.createTextNode("$" + product.price));
     productInfoDiv.appendChild(productPrice);
 
+    if (product.quantity == 0) {
+        var outOfStockMessage = document.createElement("span");
+        outOfStockMessage.classList.add("outOfStockMessage");
+        outOfStockMessage.appendChild(document.createTextNode("OUT OF STOCK"));
+        productInfoDiv.insertBefore(outOfStockMessage, productPrice);
+    }
+
     return productInfoDiv;
 }
 
@@ -112,6 +119,9 @@ function createCartButtons(product) {
         addToCart(product.name);
     });
     addButton.appendChild(document.createTextNode("Add"));
+    if (product.quantity == 0) {
+        addButton.style.visibility = "hidden";
+    }
     cartButtons.appendChild(addButton);
 
     var removeButton = document.createElement("button");
