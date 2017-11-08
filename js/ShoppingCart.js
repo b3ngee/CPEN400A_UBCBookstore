@@ -19,7 +19,7 @@ window.addEventListener("load", function() {
         }
     });
 
-    ajaxGet("https://cpen400a-bookstore.herokuapp.com/products", ajaxOnSuccess, ajaxOnFailure);
+    initializeProducts();
 });
 
 function Product(name, price, quantity, imageUrl) {
@@ -33,7 +33,12 @@ Product.prototype.computeNetPrice = function(quantity) {
     return this.price * quantity;
 }
 
+function initializeProducts() {
+    ajaxGet("https://cpen400a-bookstore.herokuapp.com/products", ajaxOnSuccess, ajaxOnFailure);
+}
+
 function ajaxOnSuccess(response) {
+    response = JSON.parse(response);
     for (var key in response) {
         var value = response[key];
         products[key] = new Product(value.name, value.price, value.quantity, value.imageUrl);
@@ -89,6 +94,14 @@ function createProductInfo(product) {
     var cartButtons = createCartButtons(product);
     productInfoDiv.appendChild(cartButtons);
 
+    var outOfStockMessage = document.createElement("span");
+    outOfStockMessage.classList.add("outOfStockMessage");
+    if (product.quantity != 0) {
+        outOfStockMessage.style.visibility = "hidden";
+    }
+    outOfStockMessage.appendChild(document.createTextNode("OUT OF STOCK"));
+    productInfoDiv.appendChild(outOfStockMessage);
+
     var productPrice = document.createElement("span");
     productPrice.classList.add("productPrice");
     productPrice.appendChild(document.createTextNode("$" + product.price));
@@ -107,6 +120,9 @@ function createCartButtons(product) {
         addToCart(product.name);
     });
     addButton.appendChild(document.createTextNode("Add"));
+    if (product.quantity == 0) {
+        addButton.style.visibility = "hidden";
+    }
     cartButtons.appendChild(addButton);
 
     var removeButton = document.createElement("button");
@@ -118,6 +134,32 @@ function createCartButtons(product) {
     cartButtons.appendChild(removeButton);
 
     return cartButtons;
+}
+
+function updateItemInfo(item) {
+    updateItemQuantity(item, products[item].quantity, cart[item]);
+    updateItemPrice(item, products[item].price);
+}
+
+function updateItemQuantity(item, productQuantity, cartQuantity) {
+    if (quantity == 0) {
+        hideRemoveButton(item);
+        hideAddButton(item);
+        showOutOfStockMessage(item);
+    } else {
+        showAddButton(item);
+        hideOutOfStockMessage(item);
+    }
+
+    if (cartQuantity > 0) {
+        showRemoveButton(item);
+    } else {
+        hideRemoveButton(item);
+    }
+}
+
+function updateItemPrice(item, newPrice) {
+    document.getElementById(item).getElementsByClassName("productPrice")[0].textContent = "$" + newPrice;
 }
 
 function addToCart(productName) {
@@ -152,15 +194,7 @@ function showRemoveButton(productName) {
 }
 
 function showOutOfStockMessage(productName) {
-    var product = document.getElementById(productName);
-    var productInfo = product.getElementsByClassName("productInfo")[0];
-    var productPrice = product.getElementsByClassName("productPrice")[0];
-
-    var outOfStockMessage = document.createElement("span");
-    outOfStockMessage.classList.add("outOfStockMessage");
-    outOfStockMessage.appendChild(document.createTextNode("OUT OF STOCK"));
-
-    productInfo.insertBefore(outOfStockMessage, productPrice);
+    document.getElementById(productName).getElementsByClassName("outOfStockMessage")[0].style.visibility = "visible";
 }
 
 function removeFromCart(productName) {
@@ -201,7 +235,7 @@ function hideRemoveButton(productName) {
 }
 
 function hideOutOfStockMessage(productName) {
-    document.getElementById(productName).getElementsByClassName("outOfStockMessage")[0].remove();
+    document.getElementById(productName).getElementsByClassName("outOfStockMessage")[0].style.visibility = "hidden";
 }
 
 function updateSubtotal() {
@@ -244,6 +278,8 @@ function getUpdatedProducts() {
     ajaxGet("https://cpen400a-bookstore.herokuapp.com/products", compareAndUpdateProducts, ajaxOnFailure);
 
     function compareAndUpdateProducts(updatedProducts) {
+        updatedProducts = JSON.parse(updatedProducts);
+
         function removeItemFromCart(item) {
             document.getElementById("cart-" + item).remove();
         }
@@ -274,9 +310,11 @@ function getUpdatedProducts() {
                 } else if (oldQuantity !== newQuantity) {
                     if (cartQuantity == newQuantity) {
                         products[item].quantity = 0;
+                        hideCartAddButton(item);
                     } else if (cartQuantity > newQuantity) {
                         cart[item] = newQuantity;
                         products[item].quantity = 0;
+                        hideCartAddButton(item);
                         quantityChanged[item] = { old: cartQuantity, new: newQuantity };
                         updateItemQuantityInCart(item, newQuantity);
                     } else if (cartQuantity < newQuantity) {
@@ -287,6 +325,8 @@ function getUpdatedProducts() {
                 products[item].price = newPrice;
                 products[item].quantity = newQuantity;
             }
+
+            updateItemInfo(item);
         }
 
         if (Object.keys(cart).length == 0) {
@@ -385,6 +425,16 @@ function addCartItemToDom(productName, quantity) {
     document.getElementById("cart-items").appendChild(cartItem);
 }
 
+function hideCartAddButton(item) {
+    var cartItem = document.getElementById("cart-" + item);
+    if (cartItem != null) {
+        var addButtons = cartItem.getElementsByClassName("addButton");
+        if (addButtons.length > 0) {
+            addButtons[0].style.visibility = "hidden";
+        }
+    }
+}
+
 function addToCartFromCart(productName) {
     addToCart(productName);
 
@@ -461,7 +511,7 @@ function ajaxGet(url, successCallback, errorCallback) {
 
         xhr.onload = function() {
             if (xhr.status == 200) {
-                successCallback(JSON.parse(xhr.responseText));
+                successCallback(xhr.responseText);
             } else if (xhr.status == 500) {
                 resendAjax();
             } else {
