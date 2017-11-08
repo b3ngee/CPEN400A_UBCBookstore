@@ -142,7 +142,7 @@ function updateItemInfo(item) {
 }
 
 function updateItemQuantity(item, productQuantity, cartQuantity) {
-    if (quantity == 0) {
+    if (productQuantity == 0) {
         hideRemoveButton(item);
         hideAddButton(item);
         showOutOfStockMessage(item);
