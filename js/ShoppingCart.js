@@ -281,9 +281,11 @@ function getUpdatedProducts() {
                 } else if (oldQuantity !== newQuantity) {
                     if (cartQuantity == newQuantity) {
                         products[item].quantity = 0;
+                        hideCartAddButton(item);
                     } else if (cartQuantity > newQuantity) {
                         cart[item] = newQuantity;
                         products[item].quantity = 0;
+                        hideCartAddButton(item);
                         quantityChanged[item] = { old: cartQuantity, new: newQuantity };
                         updateItemQuantityInCart(item, newQuantity);
                     } else if (cartQuantity < newQuantity) {
@@ -390,6 +392,16 @@ function addCartItemToDom(productName, quantity) {
     cartItem.appendChild(buttonContainer);
 
     document.getElementById("cart-items").appendChild(cartItem);
+}
+
+function hideCartAddButton(item) {
+    var cartItem = document.getElementById("cart-" + item);
+    if (cartItem != null) {
+        var addButtons = cartItem.getElementsByClassName("addButton");
+        if (addButtons.length > 0) {
+            addButtons[0].style.visibility = "hidden";
+        }
+    }
 }
 
 function addToCartFromCart(productName) {
