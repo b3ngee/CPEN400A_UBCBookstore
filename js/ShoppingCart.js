@@ -19,7 +19,7 @@ window.addEventListener("load", function() {
         }
     });
 
-    ajaxGet("https://cpen400a-bookstore.herokuapp.com/products", ajaxOnSuccess, ajaxOnFailure);
+    initializeProducts();
 });
 
 function Product(name, price, quantity, imageUrl) {
@@ -33,7 +33,12 @@ Product.prototype.computeNetPrice = function(quantity) {
     return this.price * quantity;
 }
 
+function initializeProducts() {
+    ajaxGet("https://cpen400a-bookstore.herokuapp.com/products", ajaxOnSuccess, ajaxOnFailure);
+}
+
 function ajaxOnSuccess(response) {
+    response = JSON.parse(response);
     for (var key in response) {
         var value = response[key];
         products[key] = new Product(value.name, value.price, value.quantity, value.imageUrl);
@@ -244,6 +249,8 @@ function getUpdatedProducts() {
     ajaxGet("https://cpen400a-bookstore.herokuapp.com/products", compareAndUpdateProducts, ajaxOnFailure);
 
     function compareAndUpdateProducts(updatedProducts) {
+        updatedProducts = JSON.parse(updatedProducts);
+
         function removeItemFromCart(item) {
             document.getElementById("cart-" + item).remove();
         }
@@ -461,7 +468,7 @@ function ajaxGet(url, successCallback, errorCallback) {
 
         xhr.onload = function() {
             if (xhr.status == 200) {
-                successCallback(JSON.parse(xhr.responseText));
+                successCallback(xhr.responseText);
             } else if (xhr.status == 500) {
                 resendAjax();
             } else {
