@@ -94,17 +94,18 @@ function createProductInfo(product) {
     var cartButtons = createCartButtons(product);
     productInfoDiv.appendChild(cartButtons);
 
+    var outOfStockMessage = document.createElement("span");
+    outOfStockMessage.classList.add("outOfStockMessage");
+    if (product.quantity != 0) {
+        outOfStockMessage.style.visibility = "hidden";
+    }
+    outOfStockMessage.appendChild(document.createTextNode("OUT OF STOCK"));
+    productInfoDiv.appendChild(outOfStockMessage);
+
     var productPrice = document.createElement("span");
     productPrice.classList.add("productPrice");
     productPrice.appendChild(document.createTextNode("$" + product.price));
     productInfoDiv.appendChild(productPrice);
-
-    if (product.quantity == 0) {
-        var outOfStockMessage = document.createElement("span");
-        outOfStockMessage.classList.add("outOfStockMessage");
-        outOfStockMessage.appendChild(document.createTextNode("OUT OF STOCK"));
-        productInfoDiv.insertBefore(outOfStockMessage, productPrice);
-    }
 
     return productInfoDiv;
 }
@@ -133,6 +134,10 @@ function createCartButtons(product) {
     cartButtons.appendChild(removeButton);
 
     return cartButtons;
+}
+
+function updateItemPrice(item, newPrice) {
+    document.getElementById(item).getElementsByClassName("productPrice")[0].textContent = "$" + newPrice;
 }
 
 function addToCart(productName) {
@@ -167,15 +172,7 @@ function showRemoveButton(productName) {
 }
 
 function showOutOfStockMessage(productName) {
-    var product = document.getElementById(productName);
-    var productInfo = product.getElementsByClassName("productInfo")[0];
-    var productPrice = product.getElementsByClassName("productPrice")[0];
-
-    var outOfStockMessage = document.createElement("span");
-    outOfStockMessage.classList.add("outOfStockMessage");
-    outOfStockMessage.appendChild(document.createTextNode("OUT OF STOCK"));
-
-    productInfo.insertBefore(outOfStockMessage, productPrice);
+    document.getElementById(productName).getElementsByClassName("outOfStockMessage")[0].style.visibility = "visible";
 }
 
 function removeFromCart(productName) {
@@ -216,7 +213,7 @@ function hideRemoveButton(productName) {
 }
 
 function hideOutOfStockMessage(productName) {
-    document.getElementById(productName).getElementsByClassName("outOfStockMessage")[0].remove();
+    document.getElementById(productName).getElementsByClassName("outOfStockMessage")[0].style.visibility = "hidden";
 }
 
 function updateSubtotal() {
@@ -288,24 +285,35 @@ function getUpdatedProducts() {
                     delete cart[item];
                     quantityChanged[item] = { old: oldQuantity, new: newQuantity };
                     removeItemFromCart(item);
+                    hideRemoveButton(item);
+                    hideAddButton(item);
+                    showOutOfStockMessage(item);
                 } else if (oldQuantity !== newQuantity) {
                     if (cartQuantity == newQuantity) {
                         products[item].quantity = 0;
                         hideCartAddButton(item);
+                        hideAddButton(item);
+                        showOutOfStockMessage(item);
                     } else if (cartQuantity > newQuantity) {
                         cart[item] = newQuantity;
                         products[item].quantity = 0;
                         hideCartAddButton(item);
+                        hideAddButton(item);
+                        showOutOfStockMessage(item);
                         quantityChanged[item] = { old: cartQuantity, new: newQuantity };
                         updateItemQuantityInCart(item, newQuantity);
                     } else if (cartQuantity < newQuantity) {
                         products[item].quantity = newQuantity - cart[item];
+                        showAddButton(item);
+                        hideOutOfStockMessage(item);
                     }
                 }
             } else {
                 products[item].price = newPrice;
                 products[item].quantity = newQuantity;
             }
+
+            updateItemPrice(item, newPrice);
         }
 
         if (Object.keys(cart).length == 0) {
