@@ -47,7 +47,7 @@ function ajaxOnSuccess(response) {
 }
 
 function ajaxOnFailure(error) {
-    console.log(error);
+    alert("Oops, something went wrong! Please refresh the page.");
 }
 
 function initializeDomProductList() {
@@ -275,7 +275,11 @@ function updateItemQuantityInCart(item, newQuantity) {
 }
 
 function getUpdatedProducts() {
-    ajaxGet("https://cpen400a-bookstore.herokuapp.com/products", compareAndUpdateProducts, ajaxOnFailure);
+    ajaxGet("https://cpen400a-bookstore.herokuapp.com/products", compareAndUpdateProducts, onGetProductsFailure);
+
+    function onGetProductsFailure() {
+        alert("Oops, something went wrong! Please try checking out again.");
+    }
 
     function compareAndUpdateProducts(updatedProducts) {
         updatedProducts = JSON.parse(updatedProducts);
