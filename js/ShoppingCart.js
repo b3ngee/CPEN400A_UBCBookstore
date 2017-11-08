@@ -136,6 +136,28 @@ function createCartButtons(product) {
     return cartButtons;
 }
 
+function updateItemInfo(item) {
+    updateItemQuantity(item, products[item].quantity, cart[item]);
+    updateItemPrice(item, products[item].price);
+}
+
+function updateItemQuantity(item, productQuantity, cartQuantity) {
+    if (quantity == 0) {
+        hideRemoveButton(item);
+        hideAddButton(item);
+        showOutOfStockMessage(item);
+    } else {
+        showAddButton(item);
+        hideOutOfStockMessage(item);
+    }
+
+    if (cartQuantity > 0) {
+        showRemoveButton(item);
+    } else {
+        hideRemoveButton(item);
+    }
+}
+
 function updateItemPrice(item, newPrice) {
     document.getElementById(item).getElementsByClassName("productPrice")[0].textContent = "$" + newPrice;
 }
@@ -285,27 +307,18 @@ function getUpdatedProducts() {
                     delete cart[item];
                     quantityChanged[item] = { old: oldQuantity, new: newQuantity };
                     removeItemFromCart(item);
-                    hideRemoveButton(item);
-                    hideAddButton(item);
-                    showOutOfStockMessage(item);
                 } else if (oldQuantity !== newQuantity) {
                     if (cartQuantity == newQuantity) {
                         products[item].quantity = 0;
                         hideCartAddButton(item);
-                        hideAddButton(item);
-                        showOutOfStockMessage(item);
                     } else if (cartQuantity > newQuantity) {
                         cart[item] = newQuantity;
                         products[item].quantity = 0;
                         hideCartAddButton(item);
-                        hideAddButton(item);
-                        showOutOfStockMessage(item);
                         quantityChanged[item] = { old: cartQuantity, new: newQuantity };
                         updateItemQuantityInCart(item, newQuantity);
                     } else if (cartQuantity < newQuantity) {
                         products[item].quantity = newQuantity - cart[item];
-                        showAddButton(item);
-                        hideOutOfStockMessage(item);
                     }
                 }
             } else {
@@ -313,7 +326,7 @@ function getUpdatedProducts() {
                 products[item].quantity = newQuantity;
             }
 
-            updateItemPrice(item, newPrice);
+            updateItemInfo(item);
         }
 
         if (Object.keys(cart).length == 0) {
