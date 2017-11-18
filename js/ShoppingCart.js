@@ -34,7 +34,7 @@ Product.prototype.computeNetPrice = function(quantity) {
 }
 
 function initializeProducts() {
-    ajaxGet("https://cpen400a-bookstore.herokuapp.com/products", ajaxOnSuccess, ajaxOnFailure);
+    ajaxGet("http://localhost:5000/products", ajaxOnSuccess, ajaxOnFailure);
 }
 
 function ajaxOnSuccess(response) {
@@ -275,7 +275,7 @@ function updateItemQuantityInCart(item, newQuantity) {
 }
 
 function getUpdatedProducts() {
-    ajaxGet("https://cpen400a-bookstore.herokuapp.com/products", compareAndUpdateProducts, onGetProductsFailure);
+    ajaxGet("http://localhost:5000/products", compareAndUpdateProducts, onGetProductsFailure);
 
     function onGetProductsFailure() {
         alert("Oops, something went wrong! Please try checking out again.");
