@@ -13,6 +13,11 @@ var MongoClient = require('mongodb').MongoClient;
 
 var url = 'mongodb://localhost:27017/' + DB_NAME;
 
+/*
+    GET /products handler
+    Retrieves the entire array of products
+    Specify request parameters to filter products by price (eg. /products?pricegte=30&pricelte=100)
+*/
 app.get('/products', function(request, response) {
     response.header("Access-Control-Allow-Origin", "*");
     response.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
