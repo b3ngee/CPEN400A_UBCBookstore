@@ -6,8 +6,9 @@ var DB_NAME = "bookstore";
 
 var appHost = 'localhost:' + PORT + '/'; //hard-coded host url (should really be defined in a separate config)
 
-app.set('port', (process.env.PORT || PORT))
-app.use(express.static(__dirname + '/public'))
+app.set('port', (process.env.PORT || PORT));
+app.use(express.static(__dirname + '/public'));
+app.use(express.static(__dirname + '/../Client'));
 
 var MongoClient = require('mongodb').MongoClient;
 
