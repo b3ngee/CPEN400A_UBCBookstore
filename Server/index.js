@@ -31,9 +31,37 @@ app.get('/products', function(request, response) {
     response.header("Access-Control-Allow-Origin", "*");
     response.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
 
-    if (request.query.pricegte != undefined && isNaN(request.query.pricegte) || request.query.pricelte != undefined && isNaN(request.query.pricelte)) {
-        response.status(400).send("Please specify query parameters as integers");
-        return;
+    var query = {};
+
+    if (Object.keys(request.query).length != 0) {
+        var validParams = ["priceGte", "priceLte"];
+        if (!hasValidQueryParams(validParams, request.query)) {
+            response.status(400).send("Invalid query parameters!");
+            return;
+        }
+
+        var priceGte = request.query.priceGte;
+        var priceLte = request.query.priceLte;
+
+        query.$and = [];
+
+        if (priceGte != undefined) {
+            if (!isNaN(priceGte)) {
+                query.$and.push({price: {$gte: parseInt(priceGte)}});
+            } else {
+                response.status(400).send("Please specify query parameter priceGte as a number (eg. priceGte=100)");
+                return;
+            }
+        }
+
+        if (priceLte != undefined) {
+            if (!isNaN(priceLte)) {
+                query.$and.push({price: {$lte: parseInt(priceLte)}});
+            } else {
+                response.status(400).send("Please specify query parameter priceLte as a number (eg. priceLte=100)");
+                return;
+            }
+        }
     }
 
     MongoClient.connect(url, function(err, db) {
@@ -42,29 +70,29 @@ app.get('/products', function(request, response) {
             return;
         }
 
-        db.collection("product").find({}).toArray(function(err, products) {
+        db.collection("product").find(query).toArray(function(err, products) {
             if (err) {
                 response.status(500).send("An error occurred, please try again");
                 return;
             }
 
-            if (request.query.pricegte || request.query.pricelte) {
-                var minPrice = request.query.pricegte || 0;
-                var maxPrice = request.query.pricelte || Number.MAX_SAFE_INTEGER;
-                products = filterByPrice(products, minPrice, maxPrice);
-            }
-
-            var results = {};
-            for (var i = 0; i < products.length; i++) {
-                var product = products[i];
-                results[product.name] = product;
-            }
-
-            response.json(results);
+            response.json(products);
             db.close();
         });
     });
 });
+
+function hasValidQueryParams(validParams, params) {
+    var hasValidParams = true;
+
+    Object.keys(params).forEach(function(param) {
+        if (validParams.indexOf(param) == -1) {
+            hasValidParams = false;
+        }
+    });
+
+    return hasValidParams;
+}
 
 app.post('/checkout', function(request, response) {
     var cart;
@@ -131,16 +159,6 @@ function updateProductItem(item, cartQuantity, response) {
             db.close();
         });
     });
-}
-
-function filterByPrice(products, minimum, maximum) {
-    var filteredProducts = [];
-    products.forEach(function(product) {
-        if (product.price >= minimum && product.price <= maximum) {
-            filteredProducts.push(product);
-        }
-    });
-    return filteredProducts;
 }
 
 app.listen(app.get('port'), function() {
