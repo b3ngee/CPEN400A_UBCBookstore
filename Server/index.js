@@ -127,7 +127,7 @@ function createOrder(cart, priceTotal, response) {
             return;
         }
 
-        db.collection("order").insertOne({order: cart, total: priceTotal}, function(err) {
+        db.collection("order").insertOne({cart: JSON.stringify(cart), total: priceTotal}, function(err) {
             if (err) {
                 response.status(500).send("An error occurred, please try again");
             }
