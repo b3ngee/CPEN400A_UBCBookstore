@@ -256,9 +256,9 @@ function updateSubtotal() {
 
 function showCart() {
     updateInactiveTime(0);
-    clearCartItemsFromDom();
+    document.getElementById("cart-items").innerHTML = "";
     createCartItems();
-    showModal();
+    document.getElementById("modal").style.display = "block";
 }
 
 function createCartItems() {
@@ -270,10 +270,6 @@ function createCartItems() {
     for (var item in cart) {
         addCartItemToDom(item, cart[item]);
     }
-}
-
-function updateItemQuantityInCart(item, newQuantity) {
-    document.getElementById("cart-" + item).getElementsByClassName("quantity")[0].firstChild.nodeValue = newQuantity;
 }
 
 function getUpdatedProducts() {
@@ -327,7 +323,7 @@ function getUpdatedProducts() {
                         products[item].quantity = 0;
                         hideCartAddButton(item);
                         quantityChanged[item] = { old: cartQuantity, new: newQuantity };
-                        updateItemQuantityInCart(item, newQuantity);
+                        document.getElementById("cart-" + item).getElementsByClassName("quantity")[0].firstChild.nodeValue = newQuantity;
                     } else if (cartQuantity < newQuantity) {
                         products[item].quantity = newQuantity - cart[item];
                         showCartAddButton(item);
@@ -445,14 +441,6 @@ function removeFromCartFromCart(productName) {
     if (!cart[productName]) {
         cartItem.remove();
     }
-}
-
-function clearCartItemsFromDom() {
-    document.getElementById("cart-items").innerHTML = "";
-}
-
-function showModal() {
-    document.getElementById("modal").style.display = "block";
 }
 
 function hideModal() {
