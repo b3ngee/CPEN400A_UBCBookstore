@@ -19,6 +19,8 @@ window.addEventListener("load", function() {
         }
     });
 
+    document.getElementById("checkoutButton").addEventListener("click", getUpdatedProducts);
+
     initializeProducts();
 });
 
@@ -275,6 +277,11 @@ function updateItemQuantityInCart(item, newQuantity) {
 }
 
 function getUpdatedProducts() {
+    if (Object.keys(cart).length == 0) {
+        alert("Nothing to checkout!");
+        return;
+    }
+
     ajaxGet("http://localhost:5000/products", compareAndUpdateProducts, onGetProductsFailure);
 
     function onGetProductsFailure() {
