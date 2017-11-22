@@ -70,11 +70,17 @@ app.get('/products', function(request, response) {
             return;
         }
 
-        db.collection("product").find(query).toArray(function(err, products) {
+        db.collection("product").find(query).toArray(function(err, res) {
             if (err) {
                 response.status(500).send("An error occurred, please try again");
                 return;
             }
+
+            var products = {};
+
+            res.forEach((product) => {
+                products[product.name] = product;
+            });
 
             response.json(products);
             db.close();
