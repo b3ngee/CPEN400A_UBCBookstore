@@ -7,6 +7,7 @@ var inactiveTime = 0;
 var max_inactive_time = 300;
 var max_ajax_resend_count = 10;
 var ajax_timeout = 1000;
+var user_token = "abc123";
 
 window.addEventListener("load", function() {
     setInactiveInterval();
@@ -475,6 +476,7 @@ function ajaxGet(url, successCallback, errorCallback) {
     var sendAjaxGet = function() {
         var xhr = new XMLHttpRequest();
         xhr.open("GET", url);
+        xhr.setRequestHeader("token", user_token);
         xhr.timeout = ajax_timeout;
 
         function resendAjax() {
@@ -486,6 +488,8 @@ function ajaxGet(url, successCallback, errorCallback) {
         xhr.onload = function() {
             if (xhr.status == 200) {
                 successCallback(xhr.responseText);
+            } else if (xhr.status == 401) {
+                alert(xhr.responseText);
             } else if (xhr.status == 500) {
                 resendAjax();
             } else {
@@ -506,6 +510,7 @@ function ajaxPost(url, total) {
         var xhr = new XMLHttpRequest();
         xhr.open("POST", url);
         xhr.setRequestHeader("Content-Type", "application/json");
+        xhr.setRequestHeader("token", user_token);
         xhr.timeout = ajax_timeout;
 
         function alertError() {
@@ -517,6 +522,8 @@ function ajaxPost(url, total) {
                 alert("Thank you for your purchase.");
                 hideModal();
                 location.reload();
+            } else if (xhr.status == 401) {
+                alert(xhr.responseText);
             } else if (xhr.status == 500) {
                 alert("Oops, something went wrong! Please refresh the page.");
             } else {

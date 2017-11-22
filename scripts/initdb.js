@@ -3,6 +3,7 @@ conn = new Mongo();
 db = conn.getDB("bookstore");
 db.createCollection("product");
 db.createCollection("order");
+db.createCollection("user");
 
 db.product.insertMany(
     [{
@@ -77,4 +78,10 @@ db.product.insertMany(
         "quantity":8,
         "imageUrl":"http://localhost:5000/images/Keyboard.png"
     }]
+);
+
+db.user.insertOne(
+    {
+        token: "abc123"
+    }
 );
