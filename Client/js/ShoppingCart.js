@@ -516,10 +516,11 @@ function ajaxPost(url, total) {
             if (xhr.status == 200) {
                 alert("Thank you for your purchase.");
                 hideModal();
+                location.reload();
             } else if (xhr.status == 500) {
                 alert("Oops, something went wrong! Please refresh the page.");
             } else {
-                alertErrror();
+                alertError();
             }
         }
 
