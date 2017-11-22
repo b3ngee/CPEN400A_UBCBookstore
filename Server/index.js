@@ -31,53 +31,66 @@ app.get('/products', function(request, response) {
     response.header("Access-Control-Allow-Origin", "*");
     response.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
 
-    var query = {};
-
-    if (Object.keys(request.query).length != 0) {
-        var validParams = ["priceGte", "priceLte"];
-        if (!hasValidQueryParams(validParams, request.query)) {
-            response.status(400).send("Invalid query parameters!");
-            return;
-        }
-
-        var priceGte = request.query.priceGte;
-        var priceLte = request.query.priceLte;
-
-        query.$and = [];
-
-        if (priceGte != undefined) {
-            if (!isNaN(priceGte)) {
-                query.$and.push({price: {$gte: parseInt(priceGte)}});
-            } else {
-                response.status(400).send("Please specify query parameter priceGte as a number (eg. priceGte=100)");
-                return;
-            }
-        }
-
-        if (priceLte != undefined) {
-            if (!isNaN(priceLte)) {
-                query.$and.push({price: {$lte: parseInt(priceLte)}});
-            } else {
-                response.status(400).send("Please specify query parameter priceLte as a number (eg. priceLte=100)");
-                return;
-            }
-        }
-    }
-
     MongoClient.connect(url, function(err, db) {
         if (err) {
             response.status(500).send("An error occurred, please try again");
             return;
         }
 
-        db.collection("product").find(query).toArray(function(err, products) {
-            if (err) {
-                response.status(500).send("An error occurred, please try again");
+        db.collection("user").find({token: request.headers.token}).toArray(function(err, res) {
+            if (res.length == 0) {
+                response.status(401).send("Access denied! Invalid token.");
                 return;
             }
 
-            response.json(products);
-            db.close();
+            var query = {};
+
+            if (Object.keys(request.query).length != 0) {
+                var validParams = ["priceGte", "priceLte"];
+                if (!hasValidQueryParams(validParams, request.query)) {
+                    response.status(400).send("Invalid query parameters!");
+                    return;
+                }
+
+                var priceGte = request.query.priceGte;
+                var priceLte = request.query.priceLte;
+
+                query.$and = [];
+
+                if (priceGte != undefined) {
+                    if (!isNaN(priceGte)) {
+                        query.$and.push({price: {$gte: parseInt(priceGte)}});
+                    } else {
+                        response.status(400).send("Please specify query parameter priceGte as a number (eg. priceGte=100)");
+                        return;
+                    }
+                }
+
+                if (priceLte != undefined) {
+                    if (!isNaN(priceLte)) {
+                        query.$and.push({price: {$lte: parseInt(priceLte)}});
+                    } else {
+                        response.status(400).send("Please specify query parameter priceLte as a number (eg. priceLte=100)");
+                        return;
+                    }
+                }
+            }
+
+            db.collection("product").find(query).toArray(function(err, res) {
+                if (err) {
+                    response.status(500).send("An error occurred, please try again");
+                    return;
+                }
+
+                var products = {};
+
+                res.forEach((product) => {
+                    products[product.name] = product;
+                });
+
+                response.json(products);
+                db.close();
+            });
         });
     });
 });
@@ -98,20 +111,36 @@ app.post('/checkout', function(request, response) {
     var cart;
     var priceTotal;
 
-    if (request.is("application/json")) {
-        cart = request.body.cart;
-        priceTotal = request.body.priceTotal;
-    } else {
-        response.status(500).send("An error occurred, please try again");
-    }
+    MongoClient.connect(url, function(err, db) {
+        if (err) {
+            response.status(500).send("An error occurred, please try again");
+            return;
+        }
 
-    createOrder(cart, priceTotal, response);
-    for (var item in cart) {
-        var cartQuantity = cart[item];
-        updateProductItem(item, cartQuantity, response);
-    }
+        db.collection("user").find({token: request.headers.token}).toArray(function(err, res) {
+            if (res.length == 0) {
+                response.status(401).send("Access denied! Invalid token.");
+                return;
+            }
 
-    response.status(200).send("Success!");
+            if (request.is("application/json")) {
+                cart = request.body.cart;
+                priceTotal = request.body.priceTotal;
+            } else {
+                response.status(500).send("An error occurred, please try again");
+                return;
+            }
+
+            createOrder(cart, priceTotal, response);
+            for (var item in cart) {
+                var cartQuantity = cart[item];
+                updateProductItem(item, cartQuantity, response);
+            }
+
+            response.status(200).send("Success!");
+            db.close();
+        });
+    });
 });
 
 function createOrder(cart, priceTotal, response) {
@@ -121,7 +150,7 @@ function createOrder(cart, priceTotal, response) {
             return;
         }
 
-        db.collection("order").insertOne({order: cart, total: priceTotal}, function(err) {
+        db.collection("order").insertOne({cart: JSON.stringify(cart), total: priceTotal}, function(err) {
             if (err) {
                 response.status(500).send("An error occurred, please try again");
             }

@@ -7,6 +7,7 @@ var inactiveTime = 0;
 var max_inactive_time = 300;
 var max_ajax_resend_count = 10;
 var ajax_timeout = 1000;
+var user_token = "abc123";
 
 window.addEventListener("load", function() {
     setInactiveInterval();
@@ -18,6 +19,8 @@ window.addEventListener("load", function() {
             hideModal();
         }
     });
+
+    document.getElementById("checkoutButton").addEventListener("click", getUpdatedProducts);
 
     initializeProducts();
 });
@@ -254,9 +257,9 @@ function updateSubtotal() {
 
 function showCart() {
     updateInactiveTime(0);
-    clearCartItemsFromDom();
+    document.getElementById("cart-items").innerHTML = "";
     createCartItems();
-    showModal();
+    document.getElementById("modal").style.display = "block";
 }
 
 function createCartItems() {
@@ -270,11 +273,12 @@ function createCartItems() {
     }
 }
 
-function updateItemQuantityInCart(item, newQuantity) {
-    document.getElementById("cart-" + item).getElementsByClassName("quantity")[0].firstChild.nodeValue = newQuantity;
-}
-
 function getUpdatedProducts() {
+    if (Object.keys(cart).length == 0) {
+        alert("Nothing to checkout!");
+        return;
+    }
+
     ajaxGet("http://localhost:5000/products", compareAndUpdateProducts, onGetProductsFailure);
 
     function onGetProductsFailure() {
@@ -320,7 +324,7 @@ function getUpdatedProducts() {
                         products[item].quantity = 0;
                         hideCartAddButton(item);
                         quantityChanged[item] = { old: cartQuantity, new: newQuantity };
-                        updateItemQuantityInCart(item, newQuantity);
+                        document.getElementById("cart-" + item).getElementsByClassName("quantity")[0].firstChild.nodeValue = newQuantity;
                     } else if (cartQuantity < newQuantity) {
                         products[item].quantity = newQuantity - cart[item];
                         showCartAddButton(item);
@@ -440,14 +444,6 @@ function removeFromCartFromCart(productName) {
     }
 }
 
-function clearCartItemsFromDom() {
-    document.getElementById("cart-items").innerHTML = "";
-}
-
-function showModal() {
-    document.getElementById("modal").style.display = "block";
-}
-
 function hideModal() {
     document.getElementById("modal").style.display = "none";
 }
@@ -480,6 +476,7 @@ function ajaxGet(url, successCallback, errorCallback) {
     var sendAjaxGet = function() {
         var xhr = new XMLHttpRequest();
         xhr.open("GET", url);
+        xhr.setRequestHeader("token", user_token);
         xhr.timeout = ajax_timeout;
 
         function resendAjax() {
@@ -491,6 +488,8 @@ function ajaxGet(url, successCallback, errorCallback) {
         xhr.onload = function() {
             if (xhr.status == 200) {
                 successCallback(xhr.responseText);
+            } else if (xhr.status == 401) {
+                alert(xhr.responseText);
             } else if (xhr.status == 500) {
                 resendAjax();
             } else {
@@ -511,6 +510,7 @@ function ajaxPost(url, total) {
         var xhr = new XMLHttpRequest();
         xhr.open("POST", url);
         xhr.setRequestHeader("Content-Type", "application/json");
+        xhr.setRequestHeader("token", user_token);
         xhr.timeout = ajax_timeout;
 
         function alertError() {
@@ -521,10 +521,13 @@ function ajaxPost(url, total) {
             if (xhr.status == 200) {
                 alert("Thank you for your purchase.");
                 hideModal();
+                location.reload();
+            } else if (xhr.status == 401) {
+                alert(xhr.responseText);
             } else if (xhr.status == 500) {
                 alert("Oops, something went wrong! Please refresh the page.");
             } else {
-                alertErrror();
+                alertError();
             }
         }
 
