@@ -338,46 +338,10 @@ function getUpdatedProducts() {
             addEmptyCartMessageToDom();
         }
 
-        if (Object.keys(priceChanged).length !== 0 || Object.keys(quantityChanged).length !== 0) {
-            if (Object.keys(priceChanged).length !== 0) {
-                alertPriceChange(priceChanged);
-            }
-
-            if (Object.keys(quantityChanged).length !== 0) {
-                alertQuantityChange(quantityChanged);
-            }
-        }
-
         var subtotal = updateSubtotal();
-        setTimeout(alertSubtotal.bind(null, subtotal), 100);
+
+        ajaxPost("http://localhost:5000/checkout", subtotal);
     }
-}
-
-function alertPriceChange(priceChanged) {
-    var alertMessage = "";
-    for (var item in priceChanged) {
-        var message = item + " price changed from " + priceChanged[item].old + " to " + priceChanged[item].new + "\n";
-        alertMessage = alertMessage + message;
-    }
-
-    alert(alertMessage);
-}
-
-function alertQuantityChange(quantityChanged) {
-    var alertMessage = "";
-    for (var item in quantityChanged) {
-        if (quantityChanged[item].new == 0) {
-            alertMessage += "Sorry " + item + " is now out of stock! \n";
-        } else {
-            alertMessage += item + " quantity changed from " + quantityChanged[item].old + " to " + quantityChanged[item].new + "\n";
-        }
-    }
-
-    alert(alertMessage);
-}
-
-function alertSubtotal(subtotal) {
-    alert("Your subtotal is: $" + subtotal);
 }
 
 function addEmptyCartMessageToDom() {
@@ -540,4 +504,36 @@ function ajaxGet(url, successCallback, errorCallback) {
     }
 
     sendAjaxGet();
+}
+
+function ajaxPost(url, total) {
+    var sendAjaxPost = function() {
+        var xhr = new XMLHttpRequest();
+        xhr.open("POST", url);
+        xhr.setRequestHeader("Content-Type", "application/json");
+        xhr.timeout = ajax_timeout;
+
+        function alertError() {
+            alert("Oops, something went wrong! Please checkout again.")
+        }
+
+        xhr.onload = function() {
+            if (xhr.status == 200) {
+                alert("Thank you for your purchase.");
+                hideModal();
+            } else if (xhr.status == 500) {
+                alert("Oops, something went wrong! Please refresh the page.");
+            } else {
+                alertErrror();
+            }
+        }
+
+        xhr.onerror = alertError;
+        xhr.ontimeout = alertError;
+
+        var order = { cart: cart, priceTotal: total };
+        xhr.send(JSON.stringify(order));
+    }
+
+    sendAjaxPost();
 }

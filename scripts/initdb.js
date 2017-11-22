@@ -2,6 +2,7 @@ conn = new Mongo();
 
 db = conn.getDB("bookstore");
 db.createCollection("product");
+db.createCollection("order");
 
 db.product.insertMany(
     [{

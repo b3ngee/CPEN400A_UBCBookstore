@@ -1,4 +1,5 @@
 var express = require('express')
+var parser = require('body-parser')
 var app = express()
 
 var PORT = 5000;
@@ -9,6 +10,13 @@ var appHost = 'localhost:' + PORT + '/'; //hard-coded host url (should really be
 app.set('port', (process.env.PORT || PORT));
 app.use(express.static(__dirname + '/public'));
 app.use(express.static(__dirname + '/../Client'));
+app.use(parser.urlencoded({ extended: false }))
+app.use(parser.json())
+app.use(function(request, response, next) {
+    response.header("Access-Control-Allow-Origin", "*");
+    response.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+    next();
+})
 
 var MongoClient = require('mongodb').MongoClient;
 
@@ -57,6 +65,73 @@ app.get('/products', function(request, response) {
         });
     });
 });
+
+app.post('/checkout', function(request, response) {
+    var cart;
+    var priceTotal;
+
+    if (request.is("application/json")) {
+        cart = request.body.cart;
+        priceTotal = request.body.priceTotal;
+    } else {
+        response.status(500).send("An error occurred, please try again");
+    }
+
+    createOrder(cart, priceTotal, response);
+    for (var item in cart) {
+        var cartQuantity = cart[item];
+        updateProductItem(item, cartQuantity, response);
+    }
+
+    response.status(200).send("Success!");
+});
+
+function createOrder(cart, priceTotal, response) {
+    MongoClient.connect(url, function(err, db) {
+        if (err) {
+            response.status(500).send("An error occurred, please try again");
+            return;
+        }
+
+        db.collection("order").insertOne({order: cart, total: priceTotal}, function(err) {
+            if (err) {
+                response.status(500).send("An error occurred, please try again");
+            }
+
+            db.close();
+        });
+    })
+}
+
+function updateProductItem(item, cartQuantity, response) {
+    MongoClient.connect(url, function(err, db) {
+        if (err) {
+            response.status(500).send("An error occurred, please try again");
+            return;
+        }
+        var collection = db.collection("product");
+
+        collection.find({name: {$eq: item}}).toArray(function(err, items) {
+            if (err) {
+                response.status(500).send("An error occurred, please try again");
+            } else {
+                var oldQuantity = items[0].quantity;
+                var newQuantity = oldQuantity - cartQuantity;
+
+                if (newQuantity < 0) {
+                    response.status(500).send("An error occurred, please try again");
+                } else {
+                    collection.updateOne({name: {$eq: item}}, {$set: {quantity: newQuantity}}, function(err) {
+                        if (err) {
+                            response.status(500).send("An error occurred, please try again");
+                        }
+                    })
+                }
+            }
+            db.close();
+        });
+    });
+}
 
 function filterByPrice(products, minimum, maximum) {
     var filteredProducts = [];
