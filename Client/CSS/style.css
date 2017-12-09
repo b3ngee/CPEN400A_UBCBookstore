@@ -1,0 +1,275 @@
+body {
+    font-family: Arial;
+    width: 1000px;
+    margin: 0 auto;
+}
+
+#header {
+    display: flex;
+    margin: 10px;
+    height: 275px;
+    width: 100%;
+}
+
+#logo {
+    width: 20%;
+    border: 3px solid;
+    margin-right: 10px;
+}
+
+#welcomeBanner {
+    width: 75%;
+    border: 3px solid;
+    margin-left: 10px;
+}
+
+.showCartButtonContainer {
+    text-align: right;
+}
+
+button {
+    font-size: 1em;
+    cursor: pointer;
+}
+
+#mainContent {
+    display: flex;
+    margin: 10px;
+}
+
+#navigationMenu {
+    margin: 0;
+    padding: 0;
+    width: 200px;
+}
+
+#navigationMenu > li {
+    text-align: center;
+    line-height: 50px;
+    list-style-type: none;
+    margin: 5px 0 5px 0;
+    border: 2px solid;
+    height: 50px;
+    width: 100%;
+}
+
+#navigationMenu > li:hover {
+  cursor: pointer;
+  background-color: #EEE;
+  color: #AAA;
+}
+
+#productList {
+    width: 800px;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-evenly;
+}
+
+.product {
+    height: 250px;
+    width: 26%;
+    text-align: center;
+    margin: 5px;
+    padding: 20px 20px 0 20px;
+}
+
+.product:hover {
+    cursor: pointer;
+    background-color: #EEE;
+}
+
+.product:hover .productPrice {
+    display: block;
+    background-color: #989898;
+}
+
+.product:hover .cartOverlay {
+    display: block;
+    opacity: 0.5;
+    background-color: #989898;
+}
+
+.product:hover .cartButtons {
+    display: inline-block;
+}
+
+.product:hover .outOfStockMessage {
+    display: block;
+}
+
+.product > .productName {
+    vertical-align: -webkit-baseline-middle;
+}
+
+.product > .productInfo {
+    height: 90%;
+    position: relative;
+}
+
+.productInfo > .productImage {
+    position: relative;
+    height: 100%;
+    width: 100%;
+}
+
+.productInfo > .cartOverlay {
+    display: none;
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    top: 0;
+    left: 0;
+}
+
+.product .cartButtons {
+    display: none;
+    position: absolute;
+    top: 40%;
+    left: 10%;
+    right: 10%;
+    vertical-align: top;
+}
+
+.product .cartButtons > button {
+    font-size: 16px;
+    margin: 5px;
+    padding: 10px;
+    border-radius: 10px;
+}
+
+.productInfo > .outOfStockMessage {
+    display: none;
+    color: red;
+    font-size: 20px;
+    font-weight: bold;
+    position: absolute;
+    padding: 5px 0;
+    left: 0;
+    right: 0;
+    bottom: 25%;
+}
+
+.cartButtons > button {
+    border: none;
+    cursor: pointer;
+}
+
+.addButton {
+    background: #169a40;
+}
+
+.removeButton {
+    background: #c41b13;
+}
+
+.product .removeButton {
+    visibility: hidden;
+}
+
+.productInfo > .productPrice {
+    display: none;
+    position: absolute;
+    padding: 5px 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+}
+
+#footer {
+    position: relative;
+    display: block;
+    margin: 10px 0;
+    line-height: 2em;
+    border: 2px solid;
+    text-align: center;
+}
+
+#inactiveTimer {
+    position: absolute;
+    right: 0;
+    top: 50%;
+    transform: translate(-50%,-50%);
+    padding-right: 10px;
+}
+
+#modal {
+    display: none;
+    position: fixed;
+    z-index: 1;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgb(0,0,0);
+    background-color: rgba(0,0,0,0.25);
+}
+
+.modal-content {
+    position: relative;
+    background-color: #fefefe;
+    margin: 10% auto;
+    padding: 20px;
+    border: 1px solid #000;
+    border-radius: 10px;
+    box-shadow: 0 0 20px rgba(0,0,0,1);
+    width: 600px;
+}
+
+.modal-content .closeModalButton {
+    position: absolute;
+    top: -10px;
+    right: -10px;
+}
+
+.closeModalButton {
+    width: 30px;
+    height: 30px;
+    color: #FFF;
+    background-color: #000;
+    border-radius: 50%;
+    border: 1px double #FFF;
+    box-shadow: 0 0 20px rgba(0,0,0,1);
+    font-size: 19px;
+    font-weight: bold;
+}
+
+.closeModalButton:hover,
+.closeModalButton:focus {
+    color: #f4f4f4;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+#cart-items {
+    max-height: 300px;
+    overflow: scroll;
+    margin-bottom: 20px;
+}
+
+#cart .item {
+    line-height: 30px;
+    margin-bottom: 10px;
+}
+
+#cart .item .productName {
+    float: left;
+    width: 30%;
+}
+
+#cart .item .quantity {
+    float: left;
+    width: 25%;
+}
+
+#cart .item .cartButtons > button {
+    width: 30px;
+    height: 30px;
+    border-radius: 30px;
+    margin-right: 10px;
+}
+
+#cart .checkoutButtonContainer {
+    text-align: right;
+}
